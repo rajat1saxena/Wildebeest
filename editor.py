@@ -6,6 +6,9 @@ pygtk.require("2.0")
 from BeautifulSoup import BeautifulSoup
 import sys
 import gtk
+import zencoding
+import zencoding.zen_core as zencode
+import os
 
 class editor:
     def __init__(self):
@@ -21,6 +24,13 @@ class editor:
         self.check_js = self.builder.get_object("check_js")
         self.do = self.builder.get_object("do")
         self.status = self.builder.get_object("status")
+
+        #creating project folder
+        try:
+                os.mkdir("project")
+        except OSError:
+                pass
+        os.chdir("project")
 
         #main window's settings
         self.win.set_size_request(900,450)
@@ -40,6 +50,7 @@ class editor:
 
         #other settings
         self.status.set_text("Editing...")
+        self.html.connect('key_press_event',self.zencoder)
 
         #reading data and filling text boxes
         self.prefill() 
@@ -50,6 +61,25 @@ class editor:
 
     def destroy(self,widget):
         gtk.main_quit()
+
+    def zencoder(self,widget,event):
+        keyname = gtk.gdk.keyval_name(event.keyval)
+        if event.state & gtk.gdk.CONTROL_MASK:
+                if event.keyval == 101:
+                        print("Ctrl+E")
+                        html_buffer = self.html.get_buffer()
+                        if html_buffer.get_has_selection():
+                                bounds=html_buffer.get_selection_bounds()
+                                pzentext = html_buffer.get_slice(bounds[0],bounds[1])
+                                html_buffer.delete(bounds[0],bounds[1])
+                                converted_text = zencode.expand_abbreviation(pzentext,'html','xhtml')
+                                if converted_text:
+                                        pzentext=converted_text.replace("|","")
+                                html_buffer.insert_at_cursor(pzentext)
+                                print(pzentext)
+                if event.keyval == 119:
+                        print("Ctrl+W")
+                          
 
     def prefill(self):
         try:
