@@ -19,6 +19,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Creates your page</property>
                 <property name="use_action_appearance">False</property>
               </object>
               <packing>
@@ -76,16 +77,14 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow" id="scrolledwindow1">
+                      <object class="GtkScrolledWindow" id="scrollhtml">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="hscrollbar_policy">automatic</property>
                         <property name="vscrollbar_policy">automatic</property>
+                        <property name="shadow_type">out</property>
                         <child>
-                          <object class="GtkTextView" id="html">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                          </object>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -118,16 +117,14 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow" id="scrolledwindow2">
+                      <object class="GtkScrolledWindow" id="scrollcss">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="hscrollbar_policy">automatic</property>
                         <property name="vscrollbar_policy">automatic</property>
+                        <property name="shadow_type">out</property>
                         <child>
-                          <object class="GtkTextView" id="css">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                          </object>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -160,16 +157,14 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow" id="scrolledwindow3">
+                      <object class="GtkScrolledWindow" id="scrolljs">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="hscrollbar_policy">automatic</property>
                         <property name="vscrollbar_policy">automatic</property>
+                        <property name="shadow_type">out</property>
                         <child>
-                          <object class="GtkTextView" id="js">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                          </object>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>

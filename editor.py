@@ -1,6 +1,8 @@
 # Author: Rajat Saxena<rajat.saxena.work@gmail.com>
 # License: GNU GPL v3
 
+
+#importing various modules
 import pygtk
 pygtk.require("2.0")
 from BeautifulSoup import BeautifulSoup
@@ -9,6 +11,7 @@ import gtk
 import zencoding
 import zencoding.zen_core as zencode
 import os
+import gtksourceview2
 
 class editor:
     def __init__(self):
@@ -18,12 +21,61 @@ class editor:
 
         #getting objects from glade file
         self.win = self.builder.get_object("mainwin")
-        self.html = self.builder.get_object("html")
-        self.css = self.builder.get_object("css")
-        self.js = self.builder.get_object("js")
+        #self.html = self.builder.get_object("html")
+        #self.css = self.builder.get_object("css")
+        #self.js = self.builder.get_object("js")
         self.check_js = self.builder.get_object("check_js")
         self.do = self.builder.get_object("do")
         self.status = self.builder.get_object("status")
+        self.scrollhtml = self.builder.get_object("scrollhtml")
+        self.scrollcss = self.builder.get_object("scrollcss")
+        self.scrolljs = self.builder.get_object("scrolljs")
+
+        #creating gtksourceview
+        self.html = gtk.TextView()
+        self.css = gtk.TextView()
+        self.js = gtk.TextView()
+
+        self.langmanager = gtksourceview2.LanguageManager()
+        self.langhtml = self.langmanager.get_language("html")
+        self.langcss = self.langmanager.get_language("css")
+        self.langjs = self.langmanager.get_language("javascript")
+
+        self.htmlbuffer = gtksourceview2.Buffer()
+        self.cssbuffer = gtksourceview2.Buffer()
+        self.jsbuffer = gtksourceview2.Buffer()
+
+        #setting languages
+        self.htmlbuffer.set_language(self.langhtml)
+        self.cssbuffer.set_language(self.langcss)
+        self.jsbuffer.set_language(self.langjs)
+
+        self.html = gtksourceview2.View(self.htmlbuffer)
+        self.html.set_show_line_numbers(True)
+        self.html.set_auto_indent(True)
+        self.html.set_tab_width(4)
+
+
+        self.css = gtksourceview2.View(self.cssbuffer)
+        self.css.set_show_line_numbers(True)
+        self.css.set_auto_indent(True)
+        self.css.set_tab_width(4)
+
+        self.js = gtksourceview2.View(self.jsbuffer)
+        self.js.set_show_line_numbers(True)
+        self.js.set_auto_indent(True)
+        self.js.set_tab_width(4)
+
+        #adding gtksourceview to scrollboxes
+        self.scrollhtml.add(self.html)
+        self.scrollcss.add(self.css)
+        self.scrolljs.add(self.js)
+
+        #getting html template
+        template = open("html_template.html")
+        self.template_string = ""
+        for each in template:
+                self.template_string = self.template_string + each
 
         #creating project folder
         try:
@@ -45,12 +97,16 @@ class editor:
         self.status.set_size_request(900,2)
         self.do.connect("clicked",self.process)
 
+        #setting text views' styles
+        #self.html.modify_base(gtk.STATE_NORMAL,gtk.gdk.color_parse('pink'))
+        
+        
         #enabling wrap mode
         self.html.set_wrap_mode(gtk.WRAP_WORD)
 
         #other settings
         self.status.set_text("Editing...")
-        self.html.connect('key_press_event',self.zencoder)
+        self.html.connect('key_press_event',self.keyevents)
 
         #reading data and filling text boxes
         self.prefill() 
@@ -61,8 +117,9 @@ class editor:
 
     def destroy(self,widget):
         gtk.main_quit()
-
-    def zencoder(self,widget,event):
+    
+    #This function is doing various things in html view on key events
+    def keyevents(self,widget,event):
         keyname = gtk.gdk.keyval_name(event.keyval)
         if event.state & gtk.gdk.CONTROL_MASK:
                 if event.keyval == 101:
@@ -79,8 +136,12 @@ class editor:
                                 print(pzentext)
                 if event.keyval == 119:
                         print("Ctrl+W")
+        if event.keyval==65293:
+                html_buffer = self.html.get_buffer() 
+                html_buffer.insert_at_cursor("\t")
+        print(str(event.keyval));
                           
-
+    #This is the function for prefilling fields
     def prefill(self):
         try:
                 #filling html textview
@@ -94,7 +155,7 @@ class editor:
                 print(prehtmltext.renderContents())
                 prehtml.close()
 
-                html_buffer = self.html.get_buffer()
+                html_buffer = self.html.get_buffer() 
                 html_buffer.set_text(prehtmltext.renderContents())
 
                 #filling css textview
@@ -104,11 +165,10 @@ class editor:
                         string = string+each
                 print(string)
                 precss.close()
-
                 css_buffer = self.css.get_buffer()
                 css_buffer.set_text(string)
 
-                #filling css textview
+                #filling js textview
                 prejs = open("script.js","r")
                 string = ""
                 for each in prejs:
@@ -122,13 +182,15 @@ class editor:
         except:
                 pass
 
-
+    #This is the function for doing obvious thing i.e. saving data to files
     def process(self,widget):
+
+
 
         #Getting text from all the textview widgets
         html_buffer = self.html.get_buffer()
-        css_buffer = self.css.get_buffer()
         js_buffer = self.js.get_buffer()
+        css_buffer = self.css.get_buffer()
         texthtml = html_buffer.get_text(html_buffer.get_start_iter(),html_buffer.get_end_iter())
         textcss = css_buffer.get_text(css_buffer.get_start_iter(),css_buffer.get_end_iter())
         textjs = js_buffer.get_text(js_buffer.get_start_iter(),js_buffer.get_end_iter())
@@ -150,8 +212,10 @@ class editor:
         #if texthtml == "":
         #        sys.exit(0)
 
-        #Formatting the template
-        self.htmltemplate = "<!DOCTYPE html>\n<html>\n<head>\n<title>From Editor</title>\n<script type='text/javascript' src='autoreload.js'>\n<script type='text/javascript' src='script.js'></script>\n<link rel='stylesheet' href='style.css'>\n"+"</head>\n<body>\n"+texthtml+"\n</body>\n</html>"
+        #Formatting the template and storing to "webfile.html"
+        
+        self.string_to_be_saved = self.template_string.replace("{{ texthtml }}",texthtml)
+        print(self.string_to_be_saved)
         
         #Saving data to script.js
         jsfile = open("script.js","w")
@@ -173,7 +237,7 @@ class editor:
 
         #Saving data to html page named "webfile.html"
         webfile = open("webfile.html","w")
-        for each in self.htmltemplate:
+        for each in self.string_to_be_saved:
             webfile.write(each)
         webfile.close()
 
