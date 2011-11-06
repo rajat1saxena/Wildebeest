@@ -31,6 +31,7 @@ class editor:
         self.scrollcss = self.builder.get_object("scrollcss")
         self.scrolljs = self.builder.get_object("scrolljs")
 
+
         #creating gtksourceview
         self.html = gtk.TextView()
         self.css = gtk.TextView()
@@ -77,6 +78,9 @@ class editor:
         for each in template:
                 self.template_string = self.template_string + each
 
+        #Explore all installed js libraries
+        self.findlib()
+
         #creating project folder
         try:
                 os.mkdir("project")
@@ -89,12 +93,12 @@ class editor:
         self.win.connect("destroy",self.destroy)
 
         #setting do button's properties
-        self.do.set_size_request(50,20)
-        self.check_js.set_size_request(50,20)
-        self.html.set_size_request(300,370)
-        self.css.set_size_request(300,370)
-        self.js.set_size_request(300,370)
-        self.status.set_size_request(900,2)
+        self.do.set_size_request(150,30)
+        self.check_js.set_size_request(150,20)
+        #self.html.set_size_request(300,370)
+        #self.css.set_size_request(300,370)
+        #self.js.set_size_request(300,370)
+        self.status.set_size_request(900,15)
         self.do.connect("clicked",self.process)
 
         #setting text views' styles
@@ -129,7 +133,7 @@ class editor:
                                 bounds=html_buffer.get_selection_bounds()
                                 pzentext = html_buffer.get_slice(bounds[0],bounds[1])
                                 html_buffer.delete(bounds[0],bounds[1])
-                                converted_text = zencode.expand_abbreviation(pzentext,'html','xhtml')
+                                converted_text = self.zencoder(pzentext) 
                                 if converted_text:
                                         pzentext=converted_text.replace("|","")
                                 html_buffer.insert_at_cursor(pzentext)
@@ -137,9 +141,12 @@ class editor:
                 if event.keyval == 119:
                         print("Ctrl+W")
         if event.keyval==65293:
-                html_buffer = self.html.get_buffer() 
-                html_buffer.insert_at_cursor("\t")
+                pass
         print(str(event.keyval));
+
+    #The zencoding function
+    def zencoder(self,pzentext):
+        return zencode.expand_abbreviation(pzentext,'html','xhtml')
                           
     #This is the function for prefilling fields
     def prefill(self):
@@ -182,9 +189,17 @@ class editor:
         except:
                 pass
 
+    #This is for finding installed js libraries
+    def findlib(self):
+        self.jslibraries=[]
+        contents = os.listdir('./libraries/')
+        for each in contents:
+                if each.endswith('.js'):
+                        self.jslibraries.append(each)
+        print("Libraries:"+str(self.jslibraries))
+
     #This is the function for doing obvious thing i.e. saving data to files
     def process(self,widget):
-
 
 
         #Getting text from all the textview widgets
