@@ -12,10 +12,11 @@ import zencoding
 import zencoding.zen_core as zencode
 import os
 import gtksourceview2
+import vte
 
 class editor:
     def __init__(self):
-        self.filename = "./interface.glade"
+        self.filename = "./interface2.glade"
         self.builder = gtk.Builder()
         self.builder.add_from_file(self.filename)
 
@@ -26,7 +27,7 @@ class editor:
         #self.js = self.builder.get_object("js")
         self.check_js = self.builder.get_object("check_js")
         self.do = self.builder.get_object("do")
-        self.status = self.builder.get_object("status")
+        self.terminal = self.builder.get_object("terminal")
         self.scrollhtml = self.builder.get_object("scrollhtml")
         self.scrollcss = self.builder.get_object("scrollcss")
         self.scrolljs = self.builder.get_object("scrolljs")
@@ -98,7 +99,7 @@ class editor:
         #self.html.set_size_request(300,370)
         #self.css.set_size_request(300,370)
         #self.js.set_size_request(300,370)
-        self.status.set_size_request(900,15)
+        self.terminal.set_size_request(900,50)
         self.do.connect("clicked",self.process)
 
         #setting text views' styles
@@ -108,8 +109,11 @@ class editor:
         #enabling wrap mode
         self.html.set_wrap_mode(gtk.WRAP_WORD)
 
-        #other settings
-        self.status.set_text("Editing...")
+        #other settings  like embedding terminal
+        self.term = vte.Terminal()
+        self.term.connect("child-exited",lambda term: gtk.main_quit())
+        self.term.fork_command()
+        self.terminal.add(self.term)
         self.html.connect('key_press_event',self.keyevents)
 
         #reading data and filling text boxes
@@ -162,8 +166,10 @@ class editor:
                 print(prehtmltext.renderContents())
                 prehtml.close()
 
-                html_buffer = self.html.get_buffer() 
-                html_buffer.set_text(prehtmltext.renderContents())
+                html_buffer = self.html.get_buffer()
+                string = prehtmltext.renderContents()
+                string = string.replace("\n",'',1) 
+                html_buffer.set_text(string)
 
                 #filling css textview
                 precss = open("style.css","r")
