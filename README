@@ -6,12 +6,13 @@ This is a text editor coded entirely in python.It's more like a personal project
 
 FEATURES:
 ------------------------------------------
-1. Zencoding support.
-2. No need to write initial markup.That's wildebeest's work.
-3. Write only needed things.
-4. Integrated Shell
-5. No need to switch tabs
-6. Check your webpages while developing in real time(that's the reason behind it's development)
+1. Syntax highlighting
+2. Zencoding support.
+3. No need to write initial markup.That's wildebeest's work.
+4. Write only needed things.
+5. Integrated Shell
+6. No need to switch tabs
+7. Check your webpages while developing in real time(that's the reason behind it's development)
 
 HOW TO USE:
 ------------------------------------------
