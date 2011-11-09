@@ -31,6 +31,11 @@ class editor:
         self.scrollhtml = self.builder.get_object("scrollhtml")
         self.scrollcss = self.builder.get_object("scrollcss")
         self.scrolljs = self.builder.get_object("scrolljs")
+        self.editorpanel = self.builder.get_object("editormainbuttons")
+
+        #creating combo box
+        self.combo = gtk.combo_box_new_text()
+        self.editorpanel.pack_start(self.combo,False,False)
 
 
         #creating gtksourceview
@@ -81,6 +86,11 @@ class editor:
 
         #Explore all installed js libraries
         self.findlib()
+
+        #adding to  combo box
+        for each in self.jslibraries:
+            self.combo.append_text(each)
+        self.combo.set_active(0)
 
         #creating project folder
         try:
@@ -197,7 +207,7 @@ class editor:
 
     #This is for finding installed js libraries
     def findlib(self):
-        self.jslibraries=[]
+        self.jslibraries=['javascript']
         contents = os.listdir('./libraries/')
         for each in contents:
                 if each.endswith('.js'):
@@ -206,6 +216,16 @@ class editor:
 
     #This is the function for doing obvious thing i.e. saving data to files
     def process(self,widget):
+
+        #Getting active script
+        index = self.combo.get_active()
+        print(self.jslibraries[index])
+        if self.jslibraries[index] == 'javascript':
+            self.string_to_be_saved = self.template_string.replace("{{ loadscript }}","")
+        else:
+            srcscript = '<script src="../libraries/'+self.jslibraries[index]+'"></script>'
+            self.string_to_be_saved = self.template_string.replace("{{ loadscript }}",srcscript)
+        #print(self.string_to_be_saved)
 
 
         #Getting text from all the textview widgets
@@ -235,7 +255,7 @@ class editor:
 
         #Formatting the template and storing to "webfile.html"
         
-        self.string_to_be_saved = self.template_string.replace("{{ texthtml }}",texthtml)
+        self.string_to_be_saved = self.string_to_be_saved.replace("{{ texthtml }}",texthtml)
         print(self.string_to_be_saved)
         
         #Saving data to script.js
@@ -267,4 +287,3 @@ class editor:
 if __name__ == "__main__":
     editor = editor()
     gtk.main()
-        
