@@ -3,16 +3,28 @@
 
 
 #importing various modules
-import pygtk
+try:
+    import pygtk
+except ImportError:
+    print("Please install pygtk")
 pygtk.require("2.0")
-from BeautifulSoup import BeautifulSoup
+try:
+    from BeautifulSoup import BeautifulSoup
+except ImportError:
+    print("Please install BeautifulSoup")
 import sys
 import gtk
 import zencoding
 import zencoding.zen_core as zencode
 import os
-import gtksourceview2
-import vte
+try:
+    import gtksourceview2
+except ImportError:
+    print("Please install gtksourceview2")
+try:
+    import vte
+except ImportError:
+    print("Please install vte")
 
 class editor:
     def __init__(self):
