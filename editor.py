@@ -16,6 +16,7 @@ import sys
 import gtk
 import zencoding
 import zencoding.zen_core as zencode
+from prefixrplug import prefixr
 import os
 try:
     import gtksourceview2
@@ -105,11 +106,13 @@ class editor:
         self.combo.set_active(0)
 
         #creating project folder
+        home = os.path.expanduser("~")
+        os.chdir(home)
         try:
-                os.mkdir("project")
+                os.mkdir("wildebeest_project")
         except OSError:
                 pass
-        os.chdir("project")
+        os.chdir("wildebeest_project")
 
         #main window's settings
         self.win.set_size_request(900,450)
@@ -137,6 +140,7 @@ class editor:
         self.term.fork_command()
         self.terminal.add(self.term)
         self.html.connect('key_press_event',self.keyevents)
+        self.css.connect('key_press_event',self.keyevents)
 
         #reading data and filling text boxes
         self.prefill() 
@@ -166,6 +170,11 @@ class editor:
                                 print(pzentext)
                 if event.keyval == 119:
                         print("Ctrl+W")
+                        css_buffer = self.css.get_buffer()
+                        if css_buffer.get_has_selection():
+                                bounds = css_buffer.get_selection_bounds()
+                                prefixrtext = css_buffer.get_slice(bounds[0],bounds[1])
+                                prefixr(prefixrtext)
         if event.keyval==65293:
                 pass
         print(str(event.keyval));
