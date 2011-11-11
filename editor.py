@@ -97,6 +97,11 @@ class editor:
         for each in template:
                 self.template_string = self.template_string + each
 
+
+        #creating project folder
+        home = os.path.expanduser("~")
+        os.chdir(home)
+
         #Explore all installed js libraries
         self.findlib()
 
@@ -105,9 +110,6 @@ class editor:
             self.combo.append_text(each)
         self.combo.set_active(0)
 
-        #creating project folder
-        home = os.path.expanduser("~")
-        os.chdir(home)
         try:
                 os.mkdir("wildebeest_project")
         except OSError:
