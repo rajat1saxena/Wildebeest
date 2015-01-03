@@ -4,6 +4,9 @@ Wildebeest Text Editor
 ####INTRODUCTION
 This is a text editor coded entirely in python.It's more like a personal project to help me in quickly developing webpages or testing some experiments of css,html and javascript. However you can use it for day to day web development or for playing around with js,css and html.It's like JSFIDDLE right on your machine. Feel free to email me if you need any kind of assistance in using the product.
 
+####Screenshot
+![Wildebeest Editor](screenshot.png)
+
 ####FEATURES
 - Syntax highlighting
 - Zencoding support.
